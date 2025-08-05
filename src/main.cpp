@@ -36,7 +36,7 @@ int main()
     float pongl_y = window->getSize().y / 2.0f;
     float pongr_y = window->getSize().y / 2.0f;
 
-    bool gameOver = false;
+    bool gameOver = true;
     bool winner = false; // default winner is left for false
 
     // * ball
@@ -53,6 +53,15 @@ int main()
     pongl.setPosition({PADDING_X, pongl_y});
     pongl.setFillColor(sf::Color::White);
 
+    // * gameover //
+
+    sf::Font font("assets/Courier New Bold.ttf");
+    sf::Text gameoverText(font, "!!Game Over!!", 75);
+    sf::Text winnerText(font, "Player 1 Wins", 50);
+
+    gameoverText.setOrigin(gameoverText.getLocalBounds().getCenter());
+    winnerText.setOrigin(winnerText.getLocalBounds().getCenter());
+
     while (window->isOpen())
     {
         window->setFramerateLimit(60u); // * limiting to 60fps
@@ -60,6 +69,10 @@ int main()
         // * clock!!
         float deltaTime = clock.restart().asSeconds();
         float fps = 1.0f / deltaTime;
+
+        // * text
+        gameoverText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f - 50.0f});
+        winnerText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f + 10.0f});
 
         while (const std::optional event = window->pollEvent())
         {
@@ -130,7 +143,7 @@ int main()
             int newx = ball.xvel + ::rand() % X_JITTER - X_JITTER / 2;
             int newy = std::sqrt(INITAL_FVEL2 - newx * newx);
 
-            std::cout << "velocities sum of squares : " << newx * newx + newy * newy << "\n";
+            // std::cout << "velocities sum of squares : " << newx * newx + newy * newy << "\n";
             ball.setVelocity(newx, newy);
         }
         else if (ball.xpos > window->getSize().x - PONG_XDIFF)
@@ -174,6 +187,12 @@ int main()
         }
         else
         {
+            if (winner)
+            {
+                winnerText.setString("Player 2 Wins");
+            }
+            window->draw(gameoverText);
+            window->draw(winnerText);
         }
 
         window->display();
