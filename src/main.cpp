@@ -8,9 +8,8 @@ using namespace std;
 int main()
 {
 
-    // * shape class
-    Ball s;
-    s.draw();
+    // * ball
+    Ball ball(50.0f, 100.0f, 100.0f, 0.0f, 0.0f, sf::Color::White);
 
     // * create window
     sf::ContextSettings settings;
@@ -60,6 +59,7 @@ int main()
         window->clear(sf::Color(13, 19, 28)); // * colour window buffer
 
         // * drawing
+        window->draw(ball.getBall());
 
         window->display();
     }
