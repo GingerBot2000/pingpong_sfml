@@ -1,5 +1,5 @@
 #include <iostream>
-#include "shape.h"
+#include "ball.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
@@ -9,7 +9,7 @@ int main()
 {
 
     // * shape class
-    Shape s;
+    Ball s;
     s.draw();
 
     // * create window

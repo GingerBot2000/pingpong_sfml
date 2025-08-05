@@ -30,17 +30,17 @@
 
 
         {
-            "name": "Debug shapes + main",
+            "name": "Debug ball + main",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/shapesDemo",
+            "program": "${workspaceFolder}/bin/final",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true,
             "MIMode": "lldb",
-            "preLaunchTask": "C/C++: build shapes + main",
+            "preLaunchTask": "C/C++: build ball + main",
             "setupCommands": [
                 {
                 "description": "Enable pretty-printing for gdb/lldb",

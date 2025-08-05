@@ -1,7 +1,7 @@
 #include <iostream>
-#include "shape.h"
+#include "ball.h"
 
-void Shape::draw()
+void Ball::draw()
 {
     std::cout << "\ndrawing!!\n";
 }

@@ -42,16 +42,16 @@
 
 
         {
-            "label": "C/C++: build shapes + main",
+            "label": "C/C++: build ball + main",
             "type": "shell",
             "command": "/usr/bin/clang++",
             "args": [
                 "-std=c++17",
                 "-g",
                 "src/main.cpp",
-                "src/shape.cpp",
+                "src/ball.cpp",
                 "-o",
-                "bin/shapesDemo",
+                "bin/final",
 
                 // sfml
                 "-I/opt/homebrew/Cellar/sfml/3.0.1/include",
@@ -70,7 +70,7 @@
                 "kind": "build",
                 "isDefault": false
             },
-            "detail": "Builds shape.cpp and main.cpp together"
+            "detail": "Builds ball.cpp and main.cpp together"
         }
     ],
     "version": "2.0.0"
