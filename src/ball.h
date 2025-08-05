@@ -14,8 +14,6 @@ public:
     float xvel;
     float yvel;
 
-    bool isCollidedX = false;
-    bool isCollidedY = false;
     sf::Color colour;
 
     Ball(float radius, float xpos, float ypos, float xvel, float yvel, sf::Color colour);

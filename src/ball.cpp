@@ -66,16 +66,8 @@ sf::CircleShape Ball::getBall()
 }
 void Ball::update(float deltaTime)
 {
-    std::cout << "\nisCollided xy = " << isCollidedX << isCollidedY << "\n";
-
-    if (!isCollidedX && this->xvel != 0.0f)
-    {
-        this->xpos += this->xvel * deltaTime;
-    }
-    if (!isCollidedY && this->yvel != 0.0f)
-    {
-        this->ypos += this->yvel * deltaTime;
-    }
+    this->xpos += this->xvel * deltaTime;
+    this->ypos += this->yvel * deltaTime;
 
     this->ball.setPosition({xpos, ypos});
 }
@@ -85,14 +77,10 @@ void Ball::update(float deltaTime)
 void Ball::collide(float xvec, float yvec,
                    float xpos, float ypos)
 {
-
-    isCollidedX = xvec == 0.0f ? false : true;
-    isCollidedY = yvec == 0.0f ? false : true;
-
-    this->yvel = yvec == 0 ? this->yvel : yvec * this->yvel;
+    this->yvel = yvec == 0 ? this->yvel : -1 * this->yvel;
     this->yvel = (yvel == 0.0f && this->yvel == 0.0f) || std::abs(this->yvel) < 15.0f ? 0.0f : this->yvel; // for rounding
 
-    this->xvel = xvec == 0 ? this->xvel : xvec * this->xvel;
+    this->xvel = xvec == 0 ? this->xvel : -1 * this->xvel;
     this->xvel = (xvel == 0.0f && this->xvel == 0.0f) || std::abs(this->xvel) < 15.0f ? 0.0f : this->xvel; // for rounding
 
     this->setVelocity(this->xvel, this->yvel);
