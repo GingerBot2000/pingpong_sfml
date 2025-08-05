@@ -1,0 +1,53 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "custom",
+            "type": "cppdbg",
+            "request": "launch",
+            // to debug current file
+            "program": "${workspaceFolder}/bin/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "lldb",
+
+            // for curr file debugging, goes to task.json and looks for this to build
+            "preLaunchTask": "C/C++: clang++ build active file",
+            "setupCommands": [
+                {
+                "description": "Enable pretty-printing for gdb/lldb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+                }
+            ]
+        },
+
+
+        {
+            "name": "Debug shapes + main",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/shapesDemo",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "lldb",
+            "preLaunchTask": "C/C++: build shapes + main",
+            "setupCommands": [
+                {
+                "description": "Enable pretty-printing for gdb/lldb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,77 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: clang++ build active file",
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-fcolor-diagnostics",
+                "-fansi-escape-codes",
+                "-std=c++17",
+                "-g",
+                "${file}",
+                "-o",
+                "${workspaceFolder}/bin/${fileBasenameNoExtension}",
+
+                // Include path for SFML
+                "-I/opt/homebrew/Cellar/sfml/3.0.1/include",
+
+                // Linker path for SFML
+                "-L/opt/homebrew/Cellar/sfml/3.0.1/lib",
+
+                // Link SFML libraries
+                "-lsfml-graphics",
+                "-lsfml-window",
+                "-lsfml-system",
+                "-lsfml-audio",
+                "-lsfml-network"
+
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Builds the current file to the bin/ folder"
+        },
+
+
+        {
+            "label": "C/C++: build shapes + main",
+            "type": "shell",
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "src/main.cpp",
+                "src/shape.cpp",
+                "-o",
+                "bin/shapesDemo",
+
+                // sfml
+                "-I/opt/homebrew/Cellar/sfml/3.0.1/include",
+                "-L/opt/homebrew/Cellar/sfml/3.0.1/lib",
+                "-lsfml-graphics",
+                "-lsfml-window",
+                "-lsfml-system",
+                "-lsfml-audio",
+                "-lsfml-network"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "detail": "Builds shape.cpp and main.cpp together"
+        }
+    ],
+    "version": "2.0.0"
+}
