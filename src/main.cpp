@@ -28,8 +28,8 @@ int main()
     const float PONG_WIDTH = 10.0f;
     const float PONG_XDIFF = PADDING_X + PONG_WIDTH;
 
-    const float BUTTON_WIDTH = 100.0f;
-    const float BUTTON_HEIGHT = 100.0f;
+    const float BUTTON_WIDTH = 50.0f;
+    const float BUTTON_HEIGHT = 50.0f;
 
     const int X_JITTER = 100;
     const float INITIAL_XVEL = 300.0f;
@@ -58,22 +58,30 @@ int main()
     pongl.setFillColor(sf::Color::White);
 
     // * text
-    sf::Font font("assets/fonts/Courier New Bold.ttf");
-    sf::Text gameoverText(font, "!!Game Over!!", 75);
-    sf::Text winnerText(font, "Player 1 Wins", 50);
+    sf::Font font("assets/fonts/CourierNewBold.ttf");
+    sf::Text startText(font, "press space after clicking this button", 15);
+    sf::Text gameoverText(font, "game over", 40);
+    sf::Text winnerText(font, "player 1 wins", 20);
+
+    startText.setOrigin(startText.getLocalBounds().getCenter());
+    gameoverText.setOrigin(gameoverText.getLocalBounds().getCenter());
+    winnerText.setOrigin(winnerText.getLocalBounds().getCenter());
 
     // * buton
-    sf::RectangleShape button({100.0f, 100.0f});
+    sf::RectangleShape button({BUTTON_WIDTH, BUTTON_HEIGHT});
     button.setOrigin(button.getLocalBounds().getCenter());
     button.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f});
     button.setFillColor(sf::Color::White);
 
-    gameoverText.setOrigin(gameoverText.getLocalBounds().getCenter());
-    winnerText.setOrigin(winnerText.getLocalBounds().getCenter());
-
     // * sounds
     sf::SoundBuffer pong_sound_buffer("assets/sounds/pong.mp3");
     sf::Sound pong_sound(pong_sound_buffer);
+
+    sf::SoundBuffer gameover_sound_buffer("assets/sounds/gameOver.mp3");
+    sf::Sound gameover_sound(gameover_sound_buffer);
+
+    sf::SoundBuffer button_sound_buffer("assets/sounds/button.mp3");
+    sf::Sound button_sound(button_sound_buffer);
 
     while (window->isOpen())
     {
@@ -84,8 +92,9 @@ int main()
         float fps = 1.0f / deltaTime;
 
         // * text
-        gameoverText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f - 90.0f});
-        winnerText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f + 90.0f});
+        startText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f - 50.0f});
+        gameoverText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f - 50.0f});
+        winnerText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f + 50.0f});
 
         while (const std::optional event = window->pollEvent())
         {
@@ -105,7 +114,8 @@ int main()
                 if (press->button == sf::Mouse::Button::Left && button.getGlobalBounds().contains(window->mapPixelToCoords(sf::Mouse::getPosition(*window))))
                 {
                     start = true;
-                    std::cout << "game over and start : " << gameOver << start << "\n";
+                    // std::cout << "game over and start : " << gameOver << start << "\n";
+                    button_sound.play();
                 }
             }
         }
@@ -165,6 +175,7 @@ int main()
             if (!gameOver)
             {
                 gameOver = true;
+                gameover_sound.play();
                 start = false;
             }
             winner = false;
@@ -183,6 +194,7 @@ int main()
             if (!gameOver)
             {
                 gameOver = true;
+                gameover_sound.play();
                 start = false;
             }
             winner = true;
@@ -233,6 +245,7 @@ int main()
         }
         else if (!gameOver && !start)
         {
+            window->draw(startText);
             window->draw(button);
         }
         else if (gameOver && start)
