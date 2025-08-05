@@ -28,6 +28,9 @@ int main()
     const float PONG_WIDTH = 10.0f;
     const float PONG_XDIFF = PADDING_X + PONG_WIDTH;
 
+    const float BUTTON_WIDTH = 100.0f;
+    const float BUTTON_HEIGHT = 100.0f;
+
     const int X_JITTER = 100;
     const float INITIAL_XVEL = 300.0f;
     const float INITIAL_YVEL = 100.0f;
@@ -36,7 +39,8 @@ int main()
     float pongl_y = window->getSize().y / 2.0f;
     float pongr_y = window->getSize().y / 2.0f;
 
-    bool gameOver = true;
+    bool gameOver = false;
+    bool start = false;
     bool winner = false; // default winner is left for false
 
     // * ball
@@ -53,14 +57,23 @@ int main()
     pongl.setPosition({PADDING_X, pongl_y});
     pongl.setFillColor(sf::Color::White);
 
-    // * gameover //
-
-    sf::Font font("assets/Courier New Bold.ttf");
+    // * text
+    sf::Font font("assets/fonts/Courier New Bold.ttf");
     sf::Text gameoverText(font, "!!Game Over!!", 75);
     sf::Text winnerText(font, "Player 1 Wins", 50);
 
+    // * buton
+    sf::RectangleShape button({100.0f, 100.0f});
+    button.setOrigin(button.getLocalBounds().getCenter());
+    button.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f});
+    button.setFillColor(sf::Color::White);
+
     gameoverText.setOrigin(gameoverText.getLocalBounds().getCenter());
     winnerText.setOrigin(winnerText.getLocalBounds().getCenter());
+
+    // * sounds
+    sf::SoundBuffer pong_sound_buffer("assets/sounds/pong.mp3");
+    sf::Sound pong_sound(pong_sound_buffer);
 
     while (window->isOpen())
     {
@@ -71,8 +84,8 @@ int main()
         float fps = 1.0f / deltaTime;
 
         // * text
-        gameoverText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f - 50.0f});
-        winnerText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f + 10.0f});
+        gameoverText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f - 90.0f});
+        winnerText.setPosition({window->getSize().x / 2.0f, window->getSize().y / 2.0f + 90.0f});
 
         while (const std::optional event = window->pollEvent())
         {
@@ -86,14 +99,14 @@ int main()
                 sf::View view(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window->getSize())));
                 window->setView(view);
             }
-            else if (auto *key = event->getIf<sf::Event::KeyPressed>())
+
+            if (auto *press = event->getIf<sf::Event::MouseButtonReleased>())
             {
-            }
-            if (auto *press = event->getIf<sf::Event::MouseButtonPressed>())
-            {
-            }
-            if (auto *mouse = event->getIf<sf::Event::MouseMoved>())
-            {
+                if (press->button == sf::Mouse::Button::Left && button.getGlobalBounds().contains(window->mapPixelToCoords(sf::Mouse::getPosition(*window))))
+                {
+                    start = true;
+                    std::cout << "game over and start : " << gameOver << start << "\n";
+                }
             }
         }
 
@@ -124,22 +137,23 @@ int main()
             pongr.setPosition({window->getSize().x - PADDING_Y, pongr_y});
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && ball.xvel == 0.0f && ball.yvel == 0.0f)
         {
             ball.setVelocity(INITIAL_XVEL, INITIAL_YVEL);
         }
 
         // * updates
 
-        if (!gameOver)
+        if (!gameOver && start)
         {
             ball.update(deltaTime);
         }
 
         // * collision detection
-        if (ball.xpos > window->getSize().x - PONG_XDIFF && (ball.ypos < pongr_y + PONG_HEIGHT / 2.0f) && (ball.ypos > pongr_y - PONG_HEIGHT / 2.0f))
+        if (start && ball.xpos > window->getSize().x - PONG_XDIFF && (ball.ypos < pongr_y + PONG_HEIGHT / 2.0f) && (ball.ypos > pongr_y - PONG_HEIGHT / 2.0f))
         {
             ball.collide(-1.0f, 0.0f, window->getSize().x - PONG_XDIFF, ball.ypos);
+            pong_sound.play();
             int newx = ball.xvel + ::rand() % X_JITTER - X_JITTER / 2;
             int newy = std::sqrt(INITAL_FVEL2 - newx * newx);
 
@@ -148,21 +162,29 @@ int main()
         }
         else if (ball.xpos > window->getSize().x - PONG_XDIFF)
         {
-            gameOver = true;
+            if (!gameOver)
+            {
+                gameOver = true;
+                start = false;
+            }
             winner = false;
         }
 
-        if (ball.xpos < PONG_XDIFF && (ball.ypos < pongl_y + PONG_HEIGHT / 2.0f) && (ball.ypos > pongl_y - PONG_HEIGHT / 2.0f))
+        if (start && ball.xpos < PONG_XDIFF && (ball.ypos < pongl_y + PONG_HEIGHT / 2.0f) && (ball.ypos > pongl_y - PONG_HEIGHT / 2.0f))
         {
             ball.collide(-1.0f, 0.0f, PONG_XDIFF, ball.ypos);
-
+            pong_sound.play();
             int newx = ball.xvel + ::rand() % X_JITTER - X_JITTER / 2;
             int newy = std::sqrt(INITAL_FVEL2 - newx * newx);
             ball.setVelocity(newx, newy);
         }
         else if (ball.xpos < PONG_XDIFF)
         {
-            gameOver = true;
+            if (!gameOver)
+            {
+                gameOver = true;
+                start = false;
+            }
             winner = true;
         }
 
@@ -175,17 +197,31 @@ int main()
             ball.collide(0.0f, 1.0f, ball.xpos, PADDING_Y);
         }
 
+        // * button collision
+        if (button.getGlobalBounds().contains(window->mapPixelToCoords(sf::Mouse::getPosition(*window))))
+        {
+            button.setFillColor(sf::Color::Blue);
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            {
+                button.setFillColor(sf::Color::Yellow);
+            }
+        }
+        else
+        {
+            button.setFillColor(sf::Color::White);
+        }
+
         // * drawing a background colour
         window->clear(sf::Color(13, 19, 28)); // * colour window buffer
 
         // * drawing
-        if (!gameOver)
+        if (!gameOver && start)
         {
             window->draw(ball.getBall());
             window->draw(pongr);
             window->draw(pongl);
         }
-        else
+        else if (gameOver && !start)
         {
             if (winner)
             {
@@ -193,6 +229,21 @@ int main()
             }
             window->draw(gameoverText);
             window->draw(winnerText);
+            window->draw(button);
+        }
+        else if (!gameOver && !start)
+        {
+            window->draw(button);
+        }
+        else if (gameOver && start)
+        {
+            pongl_y = window->getSize().y / 2.0f;
+            pongr_y = window->getSize().y / 2.0f;
+            pongl.setPosition({PADDING_X, pongl_y});
+            pongr.setPosition({window->getSize().x - PADDING_X, pongr_y});
+            ball.setPosition(window->getSize().x / 2.0f, window->getSize().y / 2.0f);
+            ball.setVelocity(0.0f, 0.0f);
+            gameOver = false;
         }
 
         window->display();
